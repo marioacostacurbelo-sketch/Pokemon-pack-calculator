@@ -66,8 +66,7 @@ pitch_black = [
 ]
 
 
-# Ordenar por nombre por ahora
-pitch_black.sort(key=lambda card: card["name"])
+pitch_black.sort(key=lambda card: card["idMetacard"])
 
 
 # Añadir número de carta
