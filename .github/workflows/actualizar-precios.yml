@@ -16,24 +16,33 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Descargar Price Guide de Cardmarket
+      - name: Descargar Price Guide
         run: |
           curl -L \
-            -A "Mozilla/5.0" \
             -o price_guide.json \
             "https://downloads.s3.cardmarket.com/productCatalog/priceGuide/price_guide_6.json"
 
-      - name: Comprobar archivo
+      - name: Descargar catálogo de cartas
         run: |
-          echo "Tamaño del archivo:"
+          curl -L \
+            -o products_singles.json \
+            "https://downloads.s3.cardmarket.com/productCatalog/productList/products_singles_6.json"
+
+      - name: Comprobar archivos
+        run: |
+          echo "Price Guide:"
           wc -c price_guide.json
-          echo "Primeros caracteres:"
-          head -c 300 price_guide.json
+
+          echo "Catálogo:"
+          wc -c products_singles.json
 
       - name: Guardar cambios
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add price_guide.json
-          git diff --cached --quiet || git commit -m "Actualizar precios Cardmarket"
+
+          git add price_guide.json products_singles.json
+
+          git diff --cached --quiet || git commit -m "Actualizar datos Cardmarket"
+
           git push
