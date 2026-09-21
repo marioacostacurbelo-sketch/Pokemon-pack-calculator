@@ -1,15 +1,15 @@
 export default async function handler(req, res) {
     try {
         const respuesta = await fetch(
-            "https://www.cardmarket.com/en/Pokemon/Data/Price-Guide"
+            "https://downloads.s3.cardmarket.com/productCatalog/priceGuide/price_guide_6.json"
         );
 
-        const texto = await respuesta.text();
+        const datos = await respuesta.json();
 
         res.status(200).json({
             status: respuesta.status,
-            longitud: texto.length,
-            primerosCaracteres: texto.substring(0, 500)
+            productos: datos.length,
+            primerProducto: datos[0]
         });
 
     } catch (error) {
