@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Pokémon Pack Calculator</title>
 
     <style>
@@ -102,6 +101,15 @@
             margin-top: 20px;
             color: #64748b;
             font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .positivo {
+            color: #16a34a;
+        }
+
+        .negativo {
+            color: #dc2626;
         }
     </style>
 </head>
@@ -120,9 +128,8 @@
         <label for="set">Colección</label>
 
         <select id="set">
-            <option value="rivales">Rivales Predestinados</option>
-            <option value="megalegends">Megalegend</option>
-            <option value="destined">Próximamente...</option>
+            <option value="pitch-black">Pitch Black</option>
+            <option value="rivales">Rivales Predestinados — próximamente</option>
         </select>
 
         <label for="precio">Precio del sobre (€)</label>
@@ -157,8 +164,10 @@
             </div>
 
             <p class="nota">
-                ⚠️ Los datos mostrados actualmente son de demostración.
-                Más adelante utilizaremos datos reales y actualizados.
+                ⚠️ El valor esperado es una estimación.
+                Los precios utilizados corresponden a valores de mercado
+                y las probabilidades de apertura se basan en datos
+                comunitarios, no en odds oficiales publicadas por Pokémon.
             </p>
 
         </div>
@@ -169,41 +178,293 @@
 
 <script>
 
+/* =========================================================
+   PITCH BLACK — CARDMARKET 30D AVERAGE
+   ========================================================= */
+
+const precios = {
+
+    1:0.05, 2:0.02, 3:0.02, 4:0.39, 5:0.04,
+    6:0.05, 7:0.02, 8:0.54, 9:0.02, 10:0.02,
+    11:0.02, 12:0.06, 13:0.02, 14:0.02, 15:0.03,
+    16:0.42, 17:0.02, 18:0.03, 19:0.03, 20:0.06,
+    21:0.02, 22:0.02, 23:0.03, 24:0.03, 25:0.03,
+    26:0.03, 27:0.59, 28:0.05, 29:0.04, 30:0.03,
+    31:0.54, 32:0.03, 33:0.06, 34:0.05, 35:0.06,
+    36:0.04, 37:0.05, 38:0.69, 39:0.06, 40:0.03,
+    41:0.03, 42:0.03, 43:0.02, 44:0.03, 45:0.43,
+    46:0.05, 47:0.05, 48:0.93, 49:0.02, 50:0.02,
+    51:0.02, 52:0.02, 53:0.02, 54:0.02, 55:0.44,
+    56:0.05, 57:0.02, 58:0.02, 59:0.06, 60:0.02,
+    61:0.04, 62:0.08, 63:0.03, 64:0.02, 65:0.83,
+    66:0.04, 67:0.05, 68:0.05, 69:0.03, 70:0.06,
+    71:0.02, 72:0.04, 73:0.03, 74:0.04, 75:0.05,
+    76:0.04, 77:0.05, 78:0.09, 79:0.03, 80:0.05,
+    81:0.04, 82:0.03, 83:0.08, 84:0.10,
+
+    85:2.89, 86:3.47, 87:10.71, 88:3.47, 89:3.08,
+    90:10.20, 91:3.10, 92:1.73, 93:2.29, 94:3.05,
+    95:2.74, 96:2.90, 97:3.24, 98:6.81, 99:6.72,
+    100:2.71, 101:9.66, 102:3.78, 103:5.90, 104:3.06,
+    105:3.78, 106:2.27, 107:2.08, 108:3.43, 109:7.50,
+    110:1.59, 111:15.73, 112:2.27, 113:1.33,
+
+    114:49.22, 115:33.41, 116:235.94,
+    117:63.86, 118:23.86, 119:26.25, 120:146.65
+};
+
+
+/* =========================================================
+   RAREZAS DEL SET
+   ========================================================= */
+
+const common = [
+    1,2,3,5,9,10,11,13,15,18,19,21,
+    23,25,29,32,33,36,42,43,44,46,
+    49,50,51,53,57,58,60,61,63,66,
+    67,69,71,72,73
+];
+
+const uncommon = [
+    6,14,17,22,24,26,30,34,37,39,40,
+    41,52,54,64,68,74,75,76,77,78,
+    79,80,81,82
+];
+
+const rare = [
+    7,12,20,28,35,47,56,59,
+    62,70,83,84
+];
+
+const doubleRare = [
+    4,8,16,27,31,38,45,48,55,65
+];
+
+const illustrationRare = [
+    85,86,87,88,89,90,91,92,93,94,95
+];
+
+const ultraRare = [
+    96,97,98,99,100,101,102,103,104,
+    105,106,107,108,109,110,111,112,113
+];
+
+const specialIllustrationRare = [
+    114,115,116,117,118,119
+];
+
+const megaHyperRare = [
+    120
+];
+
+
+/* =========================================================
+   FUNCIONES
+   ========================================================= */
+
+function promedio(lista) {
+
+    let total = 0;
+
+    for (const numero of lista) {
+        total += precios[numero] || 0;
+    }
+
+    return total / lista.length;
+}
+
+
+/* =========================================================
+   PULL RATES OBSERVADOS
+   ========================================================= */
+
+const pullRates = {
+
+    doubleRare: 0.2102,
+    illustrationRare: 0.1101,
+    ultraRare: 0.0830,
+    specialIllustrationRare: 0.0125,
+    megaHyperRare: 0.0009
+};
+
+
+/*
+   Lo que queda del slot de Rare+ corresponde
+   al grupo de Rare.
+
+   Así todas las probabilidades suman exactamente 100%.
+*/
+
+pullRates.rare =
+    1
+    - pullRates.doubleRare
+    - pullRates.illustrationRare
+    - pullRates.ultraRare
+    - pullRates.specialIllustrationRare
+    - pullRates.megaHyperRare;
+
+
+/* =========================================================
+   REVERSE HOLO
+   =========================================================
+
+   Cardmarket Trend Price que introdujimos:
+   19,13 € para las 74 Reverse Holo.
+
+   Como todavía no tenemos precio individual fiable
+   de cada Reverse, usamos temporalmente el promedio
+   del conjunto como estimación.
+*/
+
+const reverseHoloSetTrend = 19.13;
+const reverseHoloCount = 74;
+
+const promedioReverseHolo =
+    reverseHoloSetTrend / reverseHoloCount;
+
+
+/* =========================================================
+   CALCULAR EV
+   ========================================================= */
+
+function calcularEV() {
+
+    /*
+       4 Commons
+    */
+    const evCommon =
+        4 * promedio(common);
+
+
+    /*
+       3 Uncommons
+    */
+    const evUncommon =
+        3 * promedio(uncommon);
+
+
+    /*
+       2 Reverse Holo
+    */
+    const evReverse =
+        2 * promedioReverseHolo;
+
+
+    /*
+       Slot de Rare+
+    */
+
+    const evRareSlot =
+        pullRates.rare *
+        promedio(rare)
+
+        +
+
+        pullRates.doubleRare *
+        promedio(doubleRare)
+
+        +
+
+        pullRates.illustrationRare *
+        promedio(illustrationRare)
+
+        +
+
+        pullRates.ultraRare *
+        promedio(ultraRare)
+
+        +
+
+        pullRates.specialIllustrationRare *
+        promedio(specialIllustrationRare)
+
+        +
+
+        pullRates.megaHyperRare *
+        promedio(megaHyperRare);
+
+
+    /*
+       Energy = 0 €
+
+       EV TOTAL
+    */
+
+    return (
+        evCommon
+        +
+        evUncommon
+        +
+        evReverse
+        +
+        evRareSlot
+    );
+}
+
+
+/* =========================================================
+   BOTÓN CALCULAR
+   ========================================================= */
+
 function calcular() {
 
-    const precio = parseFloat(
-        document.getElementById("precio").value
-    );
+    const precio =
+        parseFloat(
+            document.getElementById("precio").value
+        );
 
     if (!precio || precio <= 0) {
+
         alert("Introduce un precio válido.");
+
         return;
     }
 
-    /*
-       ESTO ES SOLO UNA PRUEBA.
-       Más adelante sustituiremos este número
-       por nuestro cálculo real basado en cartas,
-       probabilidades y precios.
-    */
 
-    const valorEsperado = 3.50;
+    const valorEsperado =
+        calcularEV();
 
-    const retorno = (valorEsperado / precio) * 100;
 
-    const beneficio = valorEsperado - precio;
+    const retorno =
+        (valorEsperado / precio) * 100;
 
-    document.getElementById("valorEsperado").textContent =
+
+    const beneficio =
+        valorEsperado - precio;
+
+
+    document.getElementById("valorEsperado")
+        .textContent =
         valorEsperado.toFixed(2) + " €";
 
-    document.getElementById("retorno").textContent =
+
+    document.getElementById("retorno")
+        .textContent =
         retorno.toFixed(1) + "%";
 
-    document.getElementById("beneficio").textContent =
-        (beneficio >= 0 ? "+" : "") +
-        beneficio.toFixed(2) + " €";
 
-    document.getElementById("resultado").style.display = "block";
+    const beneficioElement =
+        document.getElementById("beneficio");
+
+
+    beneficioElement.textContent =
+        (beneficio >= 0 ? "+" : "")
+        +
+        beneficio.toFixed(2)
+        +
+        " €";
+
+
+    beneficioElement.className =
+        "numero "
+        +
+        (beneficio >= 0
+            ? "positivo"
+            : "negativo");
+
+
+    document.getElementById("resultado")
+        .style.display = "block";
 }
 
 </script>
