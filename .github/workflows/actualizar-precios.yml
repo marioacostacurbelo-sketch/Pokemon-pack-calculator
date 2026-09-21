@@ -45,13 +45,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add price_guide.json products_singles.json pokemon_cards.json
+          git add price_guide.json products_singles.json pokemon_cards.json pitch_black.json
 
-          git diff --cached --quiet || git commit -m "Actualizar datos Cardmarket"
-
-          git push
-
-                    git add price_guide.json products_singles.json pokemon_cards.json
           git diff --cached --quiet || git commit -m "Actualizar datos Cardmarket"
 
           git push
