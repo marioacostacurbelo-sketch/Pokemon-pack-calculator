@@ -182,25 +182,18 @@
    PITCH BLACK — CARDMARKET 30D AVERAGE
    ========================================================= */
 
-let precios = {};
 let datosCartas = [];
 
 async function cargarPrecios() {
     try {
-        const respuesta = await fetch("pokemon_cards.json");
+        const respuesta = await fetch("pitch_black.json");
         datosCartas = await respuesta.json();
 
-        console.log("Cartas cargadas:", datosCartas.length);
-
-        // Por ahora usamos Pitch Black
-        // y guardamos sus precios para el cálculo.
-        for (const carta of datosCartas) {
-            precios[carta.idProduct] = carta.avg;
-        }
+        console.log("Pitch Black cargado:", datosCartas.length, "cartas");
 
     } catch (error) {
-        console.error("Error cargando pokemon_cards.json:", error);
-        alert("No se pudieron cargar los precios de Cardmarket.");
+        console.error("Error cargando Pitch Black:", error);
+        alert("No se pudieron cargar los datos de Pitch Black.");
     }
 }
 
