@@ -183,8 +183,34 @@
    ========================================================= */
 
 let datosCartas = [];
+let precios = {};
 
 async function cargarPrecios() {
+    try {
+        const respuesta = await fetch("pitch_black.json");
+        datosCartas = await respuesta.json();
+
+        // Crear precios usando el número de carta
+        for (const carta of datosCartas) {
+            precios[carta.number] = carta.avg;
+        }
+
+        console.log(
+            "Pitch Black cargado:",
+            datosCartas.length,
+            "cartas"
+        );
+
+    } catch (error) {
+        console.error("Error cargando Pitch Black:", error);
+
+        alert(
+            "No se pudieron cargar los precios de Pitch Black."
+        );
+    }
+}
+
+cargarPrecios();
     try {
         const respuesta = await fetch("pitch_black.json");
         datosCartas = await respuesta.json();
