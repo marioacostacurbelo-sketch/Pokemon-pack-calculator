@@ -66,18 +66,180 @@ pitch_black = [
 ]
 
 
-pitch_black.sort(key=lambda card: card["idMetacard"])
+# =========================================================
+# NUMERACIÓN OFICIAL DE PITCH BLACK
+# =========================================================
+
+numeros_pitch_black = [
+    "Tropius",
+    "Grubbin",
+    "Fomantis",
+    "Lurantis ex",
+    "Poltchageist",
+    "Sinistcha",
+    "Heatran",
+    "Mega Delphox ex",
+    "Sizzlipede",
+    "Centiskorch",
+    "Charcadet",
+    "Armarouge",
+    "Goldeen",
+    "Seaking",
+    "Wailmer",
+    "Wailord ex",
+    "Relicanth",
+    "Popplio",
+    "Brionne",
+    "Primarina",
+    "Finizen",
+    "Palafin",
+    "Electrike",
+    "Manectric",
+    "Charjabug",
+    "Vikavolt",
+    "Mega Zeraora ex",
+    "Miraidon",
+    "Slowpoke",
+    "Slowbro",
+    "Mega Slowbro ex",
+    "Jynx",
+    "Shuppet",
+    "Banette",
+    "Spiritomb",
+    "Litwick",
+    "Lampent",
+    "Mega Chandelure ex",
+    "Dhelmise",
+    "Marshadow",
+    "Annihilape",
+    "Mankey",
+    "Primeape",
+    "Cranidos",
+    "Rampardos ex",
+    "Drilbur",
+    "Koraidon",
+    "Mega Darkrai ex",
+    "Vullaby",
+    "Mandibuzz",
+    "Inkay",
+    "Malamar",
+    "Nickit",
+    "Thievul",
+    "Morpeko ex",
+    "Zarude",
+    "Maschiff",
+    "Mabosstiff",
+    "Chi-Yu",
+    "Skarmory",
+    "Shieldon",
+    "Bastiodon",
+    "Bronzor",
+    "Bronzong",
+    "Mega Excadrill ex",
+    "Pikipek",
+    "Trumbeak",
+    "Toucannon",
+    "Type: Null",
+    "Silvally",
+    "Bombirdier",
+    "Antique Armor Fossil",
+    "Antique Skull Fossil",
+    "Backtrack Badge",
+    "Dark Bell",
+    "Fossil Quarry",
+    "Gladion’s Final Battle",
+    "Gwynn",
+    "Jett",
+    "Misty’s Vitality",
+    "Rust Syndicate Grunt",
+    "Tremendous Bomb",
+    "Shadowy {D} Energy",
+    "Voltaic {L} Energy",
+    "Fomantis",
+    "Armarouge",
+    "Goldeen",
+    "Primarina",
+    "Manectric",
+    "Slowbro",
+    "Dhelmise",
+    "Thievul",
+    "Bastiodon",
+    "Toucannon",
+    "Silvally",
+    "Lurantis ex",
+    "Wailord ex",
+    "Mega Zeraora ex",
+    "Mega Chandelure ex",
+    "Rampardos ex",
+    "Mega Darkrai ex",
+    "Morpeko ex",
+    "Mega Excadrill ex",
+    "Brave Bangle",
+    "Crushing Hammer",
+    "Dark Bell",
+    "Energy Switch",
+    "Gladion’s Final Battle",
+    "Gwynn",
+    "Iron Defender",
+    "Misty’s Vitality",
+    "Rust Syndicate Grunt",
+    "Tremendous Bomb",
+    "Mega Zeraora ex",
+    "Mega Chandelure ex",
+    "Mega Darkrai ex",
+    "Morpeko ex",
+    "Gladion’s Final Battle",
+    "Gwynn",
+    "Mega Darkrai ex"
+]
 
 
-# Añadir número de carta
-for numero, card in enumerate(pitch_black, start=1):
+# =========================================================
+# CREAR MAPA NOMBRE → CARTAS
+# =========================================================
+
+por_nombre = {}
+
+for card in pitch_black:
+    nombre = card["name"]
+
+    if nombre not in por_nombre:
+        por_nombre[nombre] = []
+
+    por_nombre[nombre].append(card)
+
+
+# =========================================================
+# ASIGNAR NÚMERO OFICIAL
+# =========================================================
+
+resultado_pitch_black = []
+
+contadores = {}
+
+for numero, nombre in enumerate(numeros_pitch_black, start=1):
+
+    opciones = por_nombre.get(nombre, [])
+
+    posicion = contadores.get(nombre, 0)
+
+    if posicion >= len(opciones):
+        print(f"AVISO: No se encontró la carta #{numero}: {nombre}")
+        continue
+
+    card = opciones[posicion]
+    contadores[nombre] = posicion + 1
+
+    card = dict(card)
     card["number"] = numero
+
+    resultado_pitch_black.append(card)
 
 
 # Guardar Pitch Black
 with open("pitch_black.json", "w", encoding="utf-8") as f:
     json.dump(
-        pitch_black,
+        resultado_pitch_black,
         f,
         ensure_ascii=False,
         separators=(",", ":")
@@ -85,4 +247,4 @@ with open("pitch_black.json", "w", encoding="utf-8") as f:
 
 
 print(f"Cartas procesadas: {len(cards)}")
-print(f"Cartas Pitch Black: {len(pitch_black)}")
+print(f"Cartas Pitch Black encontradas: {len(resultado_pitch_black)}")
