@@ -39,33 +39,54 @@ for product in products:
     })
 
 
-# Todas las cartas
 with open("pokemon_cards.json", "w", encoding="utf-8") as f:
     json.dump(cards, f, ensure_ascii=False, separators=(",", ":"))
 
 
 # =========================================================
-# PITCH BLACK
+# BUSCAR PITCH BLACK
 # =========================================================
 
-PITCH_BLACK_ID = 1585
-
-pitch_black = [
-    card for card in cards
-    if card["idExpansion"] == PITCH_BLACK_ID
+palabras_pitch_black = [
+    "Tropius",
+    "Grubbin",
+    "Fomantis",
+    "Lurantis",
+    "Mega Darkrai",
+    "Mega Zeraora",
+    "Mega Chandelure",
+    "Mega Excadrill"
 ]
 
+print("")
+print("===== POSIBLES CARTAS DE PITCH BLACK =====")
 
-# Guardamos las cartas de Pitch Black SIN inventar
-# números todavía.
-with open("pitch_black.json", "w", encoding="utf-8") as f:
-    json.dump(
-        pitch_black,
-        f,
-        ensure_ascii=False,
-        separators=(",", ":")
-    )
+encontradas = {}
+
+for card in cards:
+
+    nombre = card["name"].lower()
+
+    if any(palabra.lower() in nombre for palabra in palabras_pitch_black):
+
+        expansion = card["idExpansion"]
+
+        if expansion not in encontradas:
+            encontradas[expansion] = []
+
+        encontradas[expansion].append(card["name"])
 
 
+for expansion, nombres in encontradas.items():
+
+    print("")
+    print("idExpansion:", expansion)
+    print("Número de coincidencias:", len(nombres))
+
+    for nombre in nombres[:10]:
+        print(" -", nombre)
+
+
+print("")
+print("==========================================")
 print(f"Cartas procesadas: {len(cards)}")
-print(f"Cartas Pitch Black: {len(pitch_black)}")
