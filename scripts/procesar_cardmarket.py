@@ -40,31 +40,72 @@ for product in products:
 
 
 with open("pokemon_cards.json", "w", encoding="utf-8") as f:
-    json.dump(cards, f, ensure_ascii=False, separators=(",", ":"))
+    json.dump(
+        cards,
+        f,
+        ensure_ascii=False,
+        separators=(",", ":")
+    )
 
 
 # =========================================================
-# COMPARAR EXPANSIONES CANDIDATAS
+# BUSCAR PITCH BLACK
 # =========================================================
 
-expansiones = [1543, 1546]
+pitch_black_names = [
+    "Tropius",
+    "Grubbin",
+    "Fomantis",
+    "Lurantis ex",
+    "Poltchageist",
+    "Sinistcha",
+    "Heatran",
+    "Mega Delphox ex",
+    "Mega Chandelure ex",
+    "Mega Slowbro ex",
+    "Mega Zeraora ex",
+    "Mega Excadrill ex",
+    "Mega Darkrai ex",
+    "Morpeko ex",
+    "Wailord ex",
+    "Rampardos ex",
+    "Drilbur",
+    "Type: Null"
+]
 
 print("")
-print("===== COMPARACIÓN DE EXPANSIONES =====")
+print("===== BUSCANDO PITCH BLACK =====")
 
-for expansion_id in expansiones:
+candidatos = {}
 
-    cartas_expansion = [
-        card for card in cards
-        if card["idExpansion"] == expansion_id
-    ]
+for card in cards:
+
+    nombre = card["name"].lower()
+
+    for objetivo in pitch_black_names:
+
+        if objetivo.lower() in nombre:
+
+            expansion = card["idExpansion"]
+
+            if expansion not in candidatos:
+                candidatos[expansion] = []
+
+            candidatos[expansion].append(card["name"])
+
+            break
+
+
+for expansion, nombres in candidatos.items():
 
     print("")
-    print("idExpansion:", expansion_id)
-    print("Número de cartas:", len(cartas_expansion))
+    print("idExpansion:", expansion)
+    print("Coincidencias:", len(nombres))
 
-    for card in cartas_expansion[:30]:
-        print(" -", card["name"])
+    for nombre in nombres:
+        print(" -", nombre)
+
 
 print("")
-print("======================================")
+print("================================")
+print(f"Cartas procesadas: {len(cards)}")
