@@ -44,49 +44,27 @@ with open("pokemon_cards.json", "w", encoding="utf-8") as f:
 
 
 # =========================================================
-# BUSCAR PITCH BLACK
+# COMPARAR EXPANSIONES CANDIDATAS
 # =========================================================
 
-palabras_pitch_black = [
-    "Tropius",
-    "Grubbin",
-    "Fomantis",
-    "Lurantis",
-    "Mega Darkrai",
-    "Mega Zeraora",
-    "Mega Chandelure",
-    "Mega Excadrill"
-]
+expansiones = [1543, 1546]
 
 print("")
-print("===== POSIBLES CARTAS DE PITCH BLACK =====")
+print("===== COMPARACIÓN DE EXPANSIONES =====")
 
-encontradas = {}
+for expansion_id in expansiones:
 
-for card in cards:
-
-    nombre = card["name"].lower()
-
-    if any(palabra.lower() in nombre for palabra in palabras_pitch_black):
-
-        expansion = card["idExpansion"]
-
-        if expansion not in encontradas:
-            encontradas[expansion] = []
-
-        encontradas[expansion].append(card["name"])
-
-
-for expansion, nombres in encontradas.items():
+    cartas_expansion = [
+        card for card in cards
+        if card["idExpansion"] == expansion_id
+    ]
 
     print("")
-    print("idExpansion:", expansion)
-    print("Número de coincidencias:", len(nombres))
+    print("idExpansion:", expansion_id)
+    print("Número de cartas:", len(cartas_expansion))
 
-    for nombre in nombres[:10]:
-        print(" -", nombre)
-
+    for card in cartas_expansion[:30]:
+        print(" -", card["name"])
 
 print("")
-print("==========================================")
-print(f"Cartas procesadas: {len(cards)}")
+print("======================================")
